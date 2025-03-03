@@ -22,15 +22,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
-import { Calendar } from "@/components/ui/calendar"; // Single Calendar Component
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+
 
 const formSchema = z.object({
   companyName: z.string().min(1, "Company name is required"),
@@ -38,12 +31,10 @@ const formSchema = z.object({
   address: z.string().min(1, "Address is required"),
   telephone: z.string().min(1, "Telephone number is required"),
   email: z.string().email("Invalid email address"),
-  drawings: z.string().min(1, "File is required"),
 });
 
 export default function NewConstruction() {
   const router = useRouter();
-  const { toast } = useToast();
    const [loading, setLoading] = useState(true); // State to track loading
    const [authChecked, setAuthChecked] = useState(false);
 
@@ -54,8 +45,7 @@ export default function NewConstruction() {
       clientName: "",
       address: "",
       telephone: "",
-      email: "",
-      drawings: "",
+      email: ""
     },
   });
 
@@ -72,17 +62,7 @@ export default function NewConstruction() {
       const data = await response.json();
 
       if (response.ok) {
-        toast({
-          title: "Registration Successful",
-          description: "New construction has been registered.",
-        });
         router.push("/dashboard");
-      } else {
-        toast({
-          title: "Construction Registration Failed",
-          description: data.message,
-          variant: "destructive",
-        });
       }
     } catch (error) {
       console.error("Error during construction registration", error);
@@ -102,7 +82,7 @@ export default function NewConstruction() {
           return;
         }
         const data=await response.json();
-        console.log('Authenticated user', data.payload);
+        // console.log('Authenticated user', data);
         setAuthChecked(true);
       }catch(error){
         console.error('Authentication failed:', error);
@@ -237,7 +217,7 @@ export default function NewConstruction() {
                   </FormItem>
                 )}
               /> */}
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="drawings"
                 render={({ field }) => (
@@ -260,7 +240,7 @@ export default function NewConstruction() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <Button type="submit" className="w-full">
                 Register Construction
               </Button>

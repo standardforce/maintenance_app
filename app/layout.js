@@ -27,11 +27,13 @@ export default function RootLayout({ children }) {
               {children}
             </div>
           </main>
+          <Footer />
+          <Toaster />
         </div>
         {/* Footer always at the bottom */}
-        <Footer />
-        <Toaster />
       </body>
     </html>
   );
 }
+
+

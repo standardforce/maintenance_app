@@ -20,19 +20,19 @@ import {
    ColumnFiltersState,
  } from "@tanstack/react-table"
 
- const data = [
-  { id: 1, address: '123 Main St', nextInspection: '2023-12-01', type: '6 months', status: 'upcoming' },
-  { id: 2, address: '456 Elm St', nextInspection: '2024-06-15', type: '1 year', status: 'upcoming' },
-  { id: 3, address: '789 Oak St', nextInspection: '2023-07-10', type: '3 years', status: 'overdue' },
-  { id: 4, address: '101 Pine St', nextInspection: '2033-09-22', type: '10 years', status: 'upcoming' },
-  // Add more dummy data here to demonstrate pagination
-  { id: 5, address: '202 Maple Ave', nextInspection: '2023-11-05', type: '6 months', status: 'upcoming' },
-  { id: 6, address: '303 Birch Blvd', nextInspection: '2023-08-20', type: '1 year', status: 'overdue' },
-  { id: 7, address: '404 Cedar Ct', nextInspection: '2024-02-28', type: '3 years', status: 'upcoming' },
-  { id: 8, address: '505 Dogwood Dr', nextInspection: '2023-10-12', type: '6 months', status: 'upcoming' },
-  { id: 9, address: '606 Elm Ext', nextInspection: '2023-09-01', type: '1 year', status: 'upcoming' },
-  { id: 10, address: '707 Fir Fwy', nextInspection: '2023-12-25', type: '3 years', status: 'upcoming' },
-]
+//  const data = [
+//   { id: 1, address: '123 Main St', nextInspection: '2023-12-01', type: '6 months', status: 'upcoming' },
+//   { id: 2, address: '456 Elm St', nextInspection: '2024-06-15', type: '1 year', status: 'upcoming' },
+//   { id: 3, address: '789 Oak St', nextInspection: '2023-07-10', type: '3 years', status: 'overdue' },
+//   { id: 4, address: '101 Pine St', nextInspection: '2033-09-22', type: '10 years', status: 'upcoming' },
+//   // Add more dummy data here to demonstrate pagination
+//   { id: 5, address: '202 Maple Ave', nextInspection: '2023-11-05', type: '6 months', status: 'upcoming' },
+//   { id: 6, address: '303 Birch Blvd', nextInspection: '2023-08-20', type: '1 year', status: 'overdue' },
+//   { id: 7, address: '404 Cedar Ct', nextInspection: '2024-02-28', type: '3 years', status: 'upcoming' },
+//   { id: 8, address: '505 Dogwood Dr', nextInspection: '2023-10-12', type: '6 months', status: 'upcoming' },
+//   { id: 9, address: '606 Elm Ext', nextInspection: '2023-09-01', type: '1 year', status: 'upcoming' },
+//   { id: 10, address: '707 Fir Fwy', nextInspection: '2023-12-25', type: '3 years', status: 'upcoming' },
+// ]
 
 const columns = [
   {
@@ -40,27 +40,27 @@ const columns = [
     header: "Address",
   },
   {
-    accessorKey: "nextInspection",
-    header: "Next Inspection",
+    accessorKey: "client_name",
+    header: "Client Name",
   },
   {
-    accessorKey: "type",
-    header: "Type",
+    accessorKey: "email",
+    header: "Email",
   },
   {
-    accessorKey: "status",
+    accessorKey: "6_months_flag",
     header: "Status",
     cell: ({ row }) => {
-      return getStatusBadge(row.getValue("status"))
+      return getStatusBadge(row.getValue("6_months_flag"))
     },
   },
 ]
 
 const getStatusBadge = (status) => {
    switch (status) {
-     case "upcoming":
+     case 0:
        return <Badge variant="outline">Upcoming</Badge>;
-     case "overdue":
+     case 1:
        return <Badge variant="destructive">Overdue</Badge>;
      default:
        return null;
@@ -70,7 +70,8 @@ const getStatusBadge = (status) => {
 
 export default function Dashboard() {
   const router = useRouter();
-  //  const [data,setData]=useState([])
+   const [data,setData]=useState({})
+   const [user,setUser]=useState()
    const [openDialog, setOpenDialog]=useState(null)
    const [globalFilter,setGlobalFilter]=useState('')
    const [sorting, setSorting] = useState([])
@@ -78,19 +79,25 @@ export default function Dashboard() {
    const [loading, setLoading] = useState(true); // State to track loading
    const [authChecked, setAuthChecked] = useState(false);
 
-  //  useEffect(()=>{
-  //     const fetchData=async()=>{
-  //        try{
-  //           const response=await fetch("/api/construction");
-  //           const result=await response.json();
-  //           setData(result);
-  //        }
-  //        catch(error){
-  //           console.log("Error fetching construction data:", error);
-  //        }
-  //     };
-  //     fetchData();
-  //  },[])
+   useEffect(()=>{
+      const fetchData=async()=>{
+         try{
+            const response=await fetch("/api/construction",{
+              method:"GET",
+              headers:{
+                "Content-Type":"application/json",
+              },
+              credentials:"include"
+            });
+            const result=await response.json();
+            setData(result);
+         }
+         catch(error){
+            console.log("Error fetching construction data:", error);
+         }
+      };
+      fetchData();
+   },[])
 
    const table=useReactTable({
       data,
@@ -126,8 +133,9 @@ export default function Dashboard() {
             router.push('/');
             return;
           }
-          const data = await response.json();
-          console.log('Authenticated user:', data.payload);
+          const resp = await response.json();
+          setUser(resp.payload.user_id);
+          console.log('Authenticated user:', resp.payload.user_id);
           setAuthChecked(true);
         } catch (error) {
           console.error('Authentication failed:', error);
@@ -148,6 +156,12 @@ export default function Dashboard() {
         </div>
       );
     }
+
+    const handleRowClick = (userId) => {
+      console.log('Navigating to:', userId);
+      router.push(`/homeowner_user/${userId}`);
+    };
+    
 
     return(
       <div className="space-y-6">
@@ -242,6 +256,8 @@ export default function Dashboard() {
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
+                      onClick={()=> handleRowClick(row.original.id)}
+                      className="cursor-pointer hover:bg-gray-100"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>

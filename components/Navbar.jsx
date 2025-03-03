@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Use Next.js navigation hook
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { 
   HomeIcon, 
@@ -11,61 +11,67 @@ import {
   BellIcon, 
   LogInIcon as LoginIcon 
 } from 'lucide-react';
+
 const Navbar = () => {
-  const [username,setUsername]=useState("Tomiken")
-  const [loading, setLoading] = useState(true); // State to track loading
-  const [authChecked, setAuthChecked] = useState(false);
-  const router=useRouter()
+  const [username, setUsername] = useState("Tomiken");
+  const [id, setUserid] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const pathname = usePathname();
-  const onClick= async() =>{
-  try{
-    const response=await fetch("/api/logout",{
-      method:"POST",
-    });
 
-    if(response.ok){
-      console.log('Logout successful');
-      router.push('/');
-    }
-    else{
-      const errorData = await response.json();
-      console.error('Logout failed:', errorData.message);
-    }
-  }
-  catch (error) {
-    console.error('Error during logout:', error);
-  }
-  }
-
-
-  useEffect(()=>{
-  const checkAuth=async()=>{
-    try{
-      const response=await fetch('/api/auth/verify-token',{
-        method:'GET',
+  const onClick = async () => {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       });
-      if(!response.ok){
-        console.log('Unauthorized');
+
+      if (response.ok) {
+        console.log('Logout successful');
         router.push('/');
-        return;
+      } else {
+        const errorData = await response.json();
+        console.error('Logout failed:', errorData.message);
       }
-
-      const result= await response.json();
-      const {username}=result.payload;
-
-      console.log('Username:', username);
-      setUsername(username)
-      setAuthChecked(true); 
-    }
-    catch (error) {
-      console.error('Authentication failed:', error);
-      router.push('/');
-    } finally{
-      setLoading(false);
+    } catch (error) {
+      console.error('Error during logout:', error);
     }
   };
-  checkAuth();
-  }, [router])
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/verify-token', {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          console.log('Unauthorized');
+          router.push('/');
+          return;
+        }
+
+        const result = await response.json();
+        const { userId, username } = result.payload;
+       
+        setUsername(username);
+        setUserid(userId);
+      } catch (error) {
+        console.error('Authentication failed:', error);
+        router.push('/');
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, [router]);
 
   if (loading) {
     return (
@@ -78,32 +84,34 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          <div className="flex">
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <NavLink href="/dashboard" icon={<HomeIcon className="h-5 w-5" />} pathname={pathname}>
-                Dashboard
-              </NavLink>
-              <NavLink href="/new-construction" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
-                New Construction
-              </NavLink>
-              <NavLink href="/maintenance" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
-                Maintenance
-              </NavLink>
-              <NavLink href="/homeowner" icon={<UserIcon className="h-5 w-5" />} pathname={pathname}>
-                Homeowner
-              </NavLink>
-              <NavLink href="/notifications" icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
-                Notifications
-              </NavLink>
-              <Button className='mt-4' onClick={onClick}>
-                Logout
-              </Button>
-              <div className="flex justify-between items-center bg-gray-800 text-white px-4 py-2 m-3.5 rounded-md">
-             <h1 className="text-sm font-bold">Welcome, {username || 'User'}!</h1>
-             </div>
-            </div>
+        <div className="flex h-16 items-center justify-between">
+          
+          {/* Left side - Navigation Links */}
+          <div className="flex space-x-8">
+            <NavLink href="/dashboard" icon={<HomeIcon className="h-5 w-5" />} pathname={pathname}>
+              Dashboard
+            </NavLink>
+            <NavLink href="/new-construction" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
+              New Construction
+            </NavLink>
+            <NavLink href="/maintenance" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
+              Maintenance
+            </NavLink>
+            <NavLink href={`/notifications`} icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
+              Notifications
+            </NavLink>
           </div>
+
+          {/* Right side - Profile & Logout */}
+          <div className="ml-auto flex items-center space-x-4">
+            <div className="bg-gray-800 text-white px-4 py-2 rounded-md">
+              <h1 className="text-sm font-bold">Welcome, {username || 'User'}!</h1>
+            </div>
+            <Button className="bg-red-500 hover:bg-red-600" onClick={onClick}>
+              Logout
+            </Button>
+          </div>
+
         </div>
       </div>
     </nav>
@@ -118,7 +126,7 @@ const NavLink = ({ href, children, icon, pathname }) => {
       href={href}
       className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
         isActive
-          ? 'border-blue-500 text-gray-900'
+          ? 'pb-2 border-blue-500 text-gray-900'
           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
       }`}
     >

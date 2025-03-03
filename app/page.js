@@ -1,15 +1,15 @@
 'use client';
-
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { LogInIcon, HomeIcon, ConstructionIcon, BellIcon, ShieldIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LogInIcon as LoginIcon} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -18,7 +18,31 @@ const formSchema = z.object({
 
 export default function Home() {
   const router = useRouter();
-  const { toast } = useToast();
+  const [loading,setLoading]=useState(true);
+
+  useEffect(()=>{
+    const checkAuth=async()=>{
+      try{
+        const response=await fetch("/api/auth/verify-token",{
+          method:"GET",
+          headers:{"Content-Type":"application/json"},
+          credentials:"include",
+        });
+
+        if(response.ok){
+          router.push("/dashboard");
+        }
+      }
+      catch(error){
+        console.error("Error verifying token:",error);
+      }
+      finally{
+        setLoading(false);
+      }
+    }
+    checkAuth();
+  },[router])
+
 
   const {
     register,
@@ -32,22 +56,6 @@ export default function Home() {
     },
   });
 
-  // const onSubmit = (values) => {
-  //   if (values.username === "admin" && values.password === "password") {
-  //     localStorage.setItem("isLoggedIn", "true");
-  //     toast({
-  //       title: "Login Successful",
-  //       description: "Welcome back!",
-  //     });
-  //     router.push("/dashboard");
-  //   } else {
-  //     toast({
-  //       title: "Login Failed",
-  //       description: "Invalid username or password",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // };
 
   const onSubmit = async (values, event) => {
     event?.preventDefault();
@@ -64,33 +72,22 @@ export default function Home() {
       });
   
       const data = await response.json(); // Parse the response JSON
-  
       if (response.ok) {
-          toast({ 
-            title: "Login Successful",
-            description: "Welcome back!",
-          });
-  
-          // Redirect to dashboard
           router.push("/dashboard");
-      } else {
-        // Handle login failure
-        toast({
-          title: "Login Failed",
-          description: data.message || "Invalid credentials.",
-          variant: "destructive",
-        });
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again later.",
-        variant: "destructive",
-      });
     }
   };
   
+  if(loading){
+    return (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          );
+  }
+
 
   return (
     <div className="flex flex-col pt-20">
@@ -100,11 +97,29 @@ export default function Home() {
           {/* Welcome Section */}
           <div className="flex-1 mb-8 md:mb-0 md:pr-10">
             <h1 className="text-4xl font-bold mb-4">
-              Welcome to the Maintenance Notification App
+            Welcome to <span className="text-blue-600">MaintenanceHub</span>
             </h1>
-            <p className="text-lg text-gray-700">
+            <p className="text-lg text-gray-700 mb-6">
               Effortlessly manage maintenance plans for newly built or renovated homes.
             </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+              <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-3">
+                <BellIcon className="h-8 w-8 text-blue-500 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">Timely Notifications</h3>
+                  <p className="text-gray-600 text-sm">Never miss important maintenance deadlines</p>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-3">
+                <ConstructionIcon className="h-8 w-8 text-blue-500 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">Project Tracking</h3>
+                  <p className="text-gray-600 text-sm">Keep all construction projects organized</p>
+                </div>
+              </div>
+              </div>
           </div>
 
           {/* Login Section */}
@@ -143,7 +158,7 @@ export default function Home() {
                       <p className="text-red-600 text-sm">{errors.password.message}</p>
                     )}
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-900">
                     <LoginIcon className="mr-2 h-4 w-4" /> Login
                   </Button>
                 </form>
@@ -162,3 +177,8 @@ export default function Home() {
     </div>
   );
 }
+
+
+
+
+

@@ -47,34 +47,34 @@ export default function HomeownerRegistration() {
   // }
    const onSubmit=async(values)=>{
     try{
-    const response=await fetch("/api/homeowner",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-      },
-      body:JSON.stringify(values)
-    })
+      const response=await fetch("/api/homeowner",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        credentials:"include",
+        body:JSON.stringify(values),
+      });
+      const data=response.json()
 
-    const data=await response.json()
-    if(response.ok){
-      localStorage.setItem("newowner","added")
-      toast({
-        title: "Registration Successful",
-         description: `New house owner has been registered`,
-      })
-      router.push("/dashboard")
-    }
+      if(response.ok){
+        toast({
+          title:"Registration Successful",
+          description:"New HomeOwner has been registered",
+        });
+        router.push("/dashboard");
+      }
       else{
         toast({
-            title: "HouseOwner Registration Failed",
-            description: data.message,
-            variant: "destructive",
-          });
+          title: "Home Owner Registration Failed",
+          description: data.message,
+          variant: "destructive",
+        });
+      }
     }
-   }
-   catch(error){
-    console.error('Error while owner registration',error)
-   }
+    catch(error){
+      console.log("Error during homwowner registration")
+    }
   }
   return (
     <div className="max-w-2xl mx-auto">

@@ -1,4 +1,3 @@
-
 import pool from '@/lib/db'
 import { cookies } from 'next/headers';
 import jwt from "jsonwebtoken"
@@ -11,6 +10,7 @@ export async function POST(request){
             "SELECT id, username FROM users WHERE username=? AND password=?",
             [username,password]
         );
+        console.log(rows);
        if(rows.length>0){
         const user=rows[0];
         const token=jwt.sign(
