@@ -241,7 +241,7 @@ export default function NewConstruction() {
                   </FormItem>
                 )}
               /> */}
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full bg-blue-600">
                 Register Construction
               </Button>
             </form>

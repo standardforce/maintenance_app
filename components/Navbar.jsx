@@ -104,7 +104,7 @@ const Navbar = () => {
 
           {/* Right side - Profile & Logout */}
           <div className="ml-auto flex items-center space-x-4">
-            <div className="bg-gray-800 text-white px-4 py-2 rounded-md">
+            <div className="bg-blue-600 text-white px-4 py-2 rounded-md">
               <h1 className="text-sm font-bold">Welcome, {username || 'User'}!</h1>
             </div>
             <Button className="bg-red-500 hover:bg-red-600" onClick={onClick}>

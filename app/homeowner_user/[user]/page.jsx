@@ -142,7 +142,7 @@ export default function HomeownerUserPage({ params }) {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-blue-600 p-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-white">User Profile</h1>
+            <h1 className="text-2xl font-bold text-white">Site Information</h1>
             <button
               onClick={toggleEditMode}
               className={`px-4 py-2 rounded transition ${
@@ -151,7 +151,7 @@ export default function HomeownerUserPage({ params }) {
                   : 'bg-white text-blue-600 hover:bg-gray-100'
               }`}
             >
-              {isEditing ? 'Cancel' : 'Edit Profile'}
+              {isEditing ? 'Cancel' : 'Edit information'}
             </button>
           </div>
         </div>
