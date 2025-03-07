@@ -2,7 +2,7 @@ import pool from "@/lib/db";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dfsefergesrdgdfgdghfghfg";
+const JWT_SECRET = process.env.JWT_KEY;
 
 async function extractUser(req) {
   try {

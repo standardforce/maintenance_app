@@ -1,7 +1,7 @@
 import pool from '@/lib/db'
 import { cookies } from 'next/headers';
 import jwt from "jsonwebtoken"
-const JWT_SECRET="dfsefergesrdgdfgdghfghfg"
+const JWT_SECRET=process.env.JWT_KEY
 export async function POST(request){
     const {username,password}=await request.json();
 

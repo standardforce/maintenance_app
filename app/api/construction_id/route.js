@@ -2,7 +2,7 @@ import pool from "@/lib/db";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = "dfsefergesrdgdfgdghfghfg"; // Ensure this matches the token signing secret
+const JWT_SECRET = process.env.JWT_KEY; // Ensure this matches the token signing secret
 
 async function extractUser() {
   try {

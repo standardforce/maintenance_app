@@ -15,7 +15,7 @@ export async function GET(){
       )
     }
 
-    const secret="dfsefergesrdgdfgdghfghfg"
+    const secret=process.env.JWT_KEY
     const payload=jwt.verify(token,secret);
     return new Response(
       JSON.stringify({success:true,payload}),

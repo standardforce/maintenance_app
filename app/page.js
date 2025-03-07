@@ -50,9 +50,9 @@ export default function Home() {
       } finally {
         setLoading(false);
       }
-    }
+    };
     checkAuth();
-  }, [router])
+  }, [router]);
 
   const {
     register,
@@ -84,7 +84,6 @@ export default function Home() {
       if (response.ok) {
         router.push("/dashboard");
       } else {
-        // Handle login error
         setLoginError(data.message || "Login failed. Please check your credentials.");
       }
     } catch (error) {
@@ -101,37 +100,37 @@ export default function Home() {
     );
   }
 
-  // Feature list for construction company operations
+  // Feature list for construction business operations
   const features = [
     {
       icon: ClipboardListIcon,
-      title: "Comprehensive Estimates",
-      description: "Create detailed project estimates with precision and ease",
+      title: "Comprehensive Estimation",
+      description: "Accurate and efficient cost estimation for construction projects.",
     },
     {
       icon: CalendarIcon,
-      title: "Advanced Schedule Management",
-      description: "Plan, track, and optimize project timelines efficiently",
+      title: "Project Scheduling",
+      description: "Optimize timelines and resource allocation effortlessly.",
     },
     {
       icon: MessageCircleIcon,
-      title: "On-Site Communication",
-      description: "Real-time messaging and updates for field teams",
+      title: "Real-time Collaboration",
+      description: "Seamless communication between teams and stakeholders.",
     },
     {
       icon: ConstructionIcon,
-      title: "Maintenance History Tracking",
-      description: "Comprehensive records of all maintenance activities",
+      title: "Maintenance & Tracking",
+      description: "Monitor project progress and maintenance records efficiently.",
     },
     {
       icon: DollarSignIcon,
-      title: "Cost Management",
-      description: "Monitor and control project expenses in real-time",
+      title: "Cost & Expense Management",
+      description: "Track budgets, reduce overheads, and maximize profits.",
     },
     {
       icon: ReceiptIcon,
-      title: "Billing Management",
-      description: "Streamlined invoicing and financial tracking",
+      title: "Billing & Invoicing",
+      description: "Streamline financial transactions and client invoicing.",
     }
   ];
 
@@ -143,13 +142,13 @@ export default function Home() {
           {/* Welcome Section */}
           <div className="flex-1 mb-8 md:mb-0 md:pr-10">
             <h1 className="text-4xl font-bold mb-4">
-              Welcome to <span className="text-blue-600">MaintenanceHub</span>
+              Welcome to <span className="text-blue-600">InfraPulse</span>
             </h1>
             <p className="text-lg text-gray-700 mb-6">
-              Comprehensive operations management for construction companies
+              A Comprehensive System for Construction Businesses
             </p>
 
-            {/* Enhanced Features Grid */}
+            {/* Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
               {features.map((feature, index) => (
                 <div 
@@ -166,7 +165,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Login Section (Unchanged) */}
+          {/* Login Section */}
           <div className="flex-1 max-w-md">
             <Card className="pt-4 pb-10 bg-white shadow-2xl rounded-xl border-t-4 border-blue-600">
               <CardHeader className="text-center">
@@ -174,7 +173,7 @@ export default function Home() {
                   <ShieldCheckIcon className="h-8 w-8 text-blue-600 animate-pulse" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-gray-800">Login</CardTitle>
-                <p className="text-gray-500 text-sm mt-2">Access your MaintenanceHub dashboard</p>
+                <p className="text-gray-500 text-sm mt-2">Access your InfraPulse dashboard</p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
