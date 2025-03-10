@@ -22,9 +22,10 @@ export async function POST(request){
         const cookiestore=await cookies();
         cookiestore.set('jwt', token, {
             httpOnly: true,  // Secure against client-side access
-            maxAge: 24 * 60 * 60 * 1000,  // 1 day
-            secure: true,    // Ensures cookies are sent over HTTPS (set to false in dev if needed)
+            maxAge: 24 * 60 * 60,  // 1 day (seconds)
+            // secure: process.env.NODE_ENV === "production", // Secure only in production
             sameSite: "Strict", // Prevents CSRF attacks
+            path: "/"
           });
 
         return new Response(JSON.stringify({

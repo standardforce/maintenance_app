@@ -14,7 +14,8 @@ export default function HomeownerUserPage({ params }) {
   const [formData, setFormData] = useState({
     client_name: '',
     email: '',
-    address: ''
+    address: '',
+    registration_date:''
   });
   const [updateMessage, setUpdateMessage] = useState({ type: '', message: '' });
 
@@ -38,7 +39,8 @@ export default function HomeownerUserPage({ params }) {
         setFormData({
           client_name: data.client_name,
           email: data.email,
-          address: data.address
+          address: data.address,
+          registration_date:data.regis_date,
         });
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -103,7 +105,8 @@ export default function HomeownerUserPage({ params }) {
       setFormData({
         client_name: userData.client_name,
         email: userData.email,
-        address: userData.address
+        address: userData.address,
+        registration_date:userData.regis_date
       });
       setUpdateMessage({ type: '', message: '' });
     }
@@ -211,7 +214,17 @@ export default function HomeownerUserPage({ params }) {
                     required
                   ></textarea>
                 </div>
-                
+                  <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Registration Date</label>
+                  <input
+                    type="date"
+                    name="registration_date"
+                    value={formData.registration_date}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
                 <div className="flex justify-end mt-6">
                   <button
                     type="button"
@@ -250,6 +263,12 @@ export default function HomeownerUserPage({ params }) {
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Address</h3>
                   <p className="mt-1 text-lg">{userData.address}</p>
+                </div>
+
+
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Registaration Date</h3>
+                  <p className="mt-1 text-lg">{userData.regis_date}</p>
                 </div>
               </div>
             </div>

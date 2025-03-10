@@ -1,4 +1,4 @@
-import pool from "@/lib/db"
+import pool from "@/lib/db";
 import { cookies } from "next/headers";
 import jwt from 'jsonwebtoken';
 
@@ -35,7 +35,7 @@ export async function POST(request){
             {status:401}
         );
     }
-    const {companyName,clientName,address,telephone,email,drawings} = 
+    const {companyName,clientName,address,telephone,email,regis_date} = 
     await request.json();
     // console.log("Received data:", {
     //     userId,
@@ -47,8 +47,8 @@ export async function POST(request){
     //     drawings,
     //   });
         await pool.query(
-         "INSERT INTO constructions (user_id, company_name,client_name,address,telephone,email) VALUES (?,?,?,?,?,?)",
-         [userId,companyName,clientName,address,telephone,email,drawings]
+         "INSERT INTO constructions (user_id, company_name,client_name,address,telephone,email,regis_date) VALUES (?,?,?,?,?,?,?)",
+         [userId,companyName,clientName,address,telephone,email,regis_date]
         );
 
         return new Response(

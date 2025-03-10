@@ -7,7 +7,7 @@ export async function POST() {
     cookieStore.set('jwt', '', {
       httpOnly: true, // Same settings as the login cookie
       maxAge: 0, // Effectively deletes the cookie
-      secure: true,
+      // secure: true,
       sameSite: 'Strict',
       path: '/', // Ensure the path matches where the cookie was set
     });

@@ -18,7 +18,7 @@ export async function GET(req, context) {
 
     // Fetch user details dynamically from 'constructions' table based on ID
     const [userData] = await pool.query(
-      `SELECT id, company_name, client_name, email, address FROM constructions WHERE id = ?`,
+      `SELECT id, company_name, client_name, email, address, DATE_FORMAT(regis_date, '%Y-%m-%d') AS regis_date FROM constructions WHERE id = ?`,
       [user] // Correct MySQL placeholder syntax
     );
 
@@ -48,19 +48,19 @@ export async function PUT(req, context) {
       }
   
       // Parse the request body for updated user data
-      const { client_name, email, address } = await req.json();
+      const { client_name, email, address, registration_date} = await req.json();
   
       // Validate required fields
-      if (!client_name || !email || !address) {
+      if (!client_name || !email || !address || !registration_date) {
         return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
       }
   
       // Update user details in the 'constructions' table
       const [result] = await pool.query(
         `UPDATE constructions 
-         SET client_name = ?, email = ?, address = ?
+         SET client_name = ?, email = ?, address = ?, regis_date= ?
          WHERE id = ?`,
-        [client_name, email, address, userId]
+        [client_name, email, address, registration_date,userId]
       );
   
       // Check if update was successful

@@ -6,11 +6,18 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { useToast } from "@/hooks/use-toast";
 import Cookies from "js-cookie";
 import { CalendarIcon, BuildingIcon, UserIcon, PhoneIcon, MailIcon, FileIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"
+import { format, parse } from "date-fns";
 import * as z from "zod";
 
 import {
@@ -31,6 +38,9 @@ const formSchema = z.object({
   address: z.string().min(1, "Address is required"),
   telephone: z.string().min(1, "Telephone number is required"),
   email: z.string().email("Invalid email address"),
+  registrationDate:z.date({
+    required_error:"Registration date is required",
+  })
 });
 
 export default function NewConstruction() {
@@ -45,19 +55,24 @@ export default function NewConstruction() {
       clientName: "",
       address: "",
       telephone: "",
-      email: ""
+      email: "",
+      registarionDate:new Date(),
     },
   });
 
   const onSubmit = async (values) => {
     try {
+      const formattedValues={
+        ...values,
+        regis_date:values.registrationDate.toISOString().split("T")[0],
+      }
       const response = await fetch("/api/construction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(values),
+        body: JSON.stringify(formattedValues),
       });
       const data = await response.json();
 
@@ -75,6 +90,7 @@ export default function NewConstruction() {
       try{
         const response=await fetch('/api/auth/verify-token',{
           method:'GET',
+          credentials:'include',
         });
         if(!response.ok){
           console.log('Unauthorized');
@@ -241,6 +257,69 @@ export default function NewConstruction() {
                   </FormItem>
                 )}
               /> */}
+              <FormField
+                control={form.control}
+                name="registrationDate"
+                render={({ field }) => {
+                  const [manualInput, setManualInput] = useState(
+                    field.value ? format(new Date(field.value), "yyyy-MM-dd") : ""
+                  );
+
+                  // Handle manual input changes
+                  const handleInputChange = (e) => {
+                    setManualInput(e.target.value);
+                    const parsedDate = parse(e.target.value, "yyyy-MM-dd", new Date());
+
+                    // Check if it's a valid date and update form state
+                    if (!isNaN(parsedDate.getTime())) {
+                      field.onChange(parsedDate);
+                    }
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Registration Date</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          {/* Manual Input for Typing Date */}
+                          <Input
+                            type="text"
+                            placeholder="YYYY-MM-DD"
+                            value={manualInput}
+                            onChange={handleInputChange}
+                            className="w-full"
+                          />
+
+                          {/* Popover Date Picker */}
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="flex items-center gap-2"
+                              >
+                                <CalendarIcon className="h-4 w-4" />
+                                {field.value ? format(new Date(field.value), "PPP") : "Pick a date"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={(date) => {
+                                  field.onChange(date);
+                                  setManualInput(format(date, "yyyy-MM-dd"));
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
               <Button type="submit" className="w-full bg-blue-600">
                 Register Construction
               </Button>
