@@ -7,15 +7,18 @@ import { Button } from "@/components/ui/button";
 import { 
   HomeIcon, 
   BuildingIcon, 
-  UserIcon, 
   BellIcon, 
-  LogInIcon as LoginIcon 
+  LogInIcon as LoginIcon, 
+  MenuIcon, 
+  XIcon,
+  UserIcon
 } from 'lucide-react';
 
 const Navbar = () => {
   const [username, setUsername] = useState("Tomiken");
   const [id, setUserid] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -23,9 +26,7 @@ const Navbar = () => {
     try {
       const response = await fetch("/api/logout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
 
@@ -46,9 +47,7 @@ const Navbar = () => {
       try {
         const response = await fetch('/api/auth/verify-token', {
           method: 'GET',
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
         });
 
@@ -86,8 +85,24 @@ const Navbar = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           
-          {/* Left side - Navigation Links */}
-          <div className="flex space-x-8">
+          {/* Left side - Brand & Hamburger Menu */}
+          <div className="flex items-center">
+            {/* Hamburger Icon for Mobile */}
+            <button 
+              className="block md:hidden text-gray-600 focus:outline-none" 
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+            </button>
+            
+            {/* Logo or Brand Name */}
+            <Link href="/dashboard" className="text-xl font-bold text-blue-600 ml-3 md:ml-0">
+              InfraPulse
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex space-x-8">
             <NavLink href="/dashboard" icon={<HomeIcon className="h-5 w-5" />} pathname={pathname}>
               Dashboard
             </NavLink>
@@ -97,36 +112,61 @@ const Navbar = () => {
             <NavLink href="/maintenance" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
               Maintenance
             </NavLink>
-            <NavLink href={`/notifications`} icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
+            <NavLink href="/notifications" icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
               Notifications
             </NavLink>
           </div>
 
-          {/* Right side - Profile & Logout */}
-          <div className="ml-auto flex items-center space-x-4">
-            <div className="bg-blue-600 text-white px-4 py-2 rounded-md">
-              <h1 className="text-sm font-bold">Welcome, {username || 'User'}!</h1>
+          {/* Profile & Logout (Always Visible) */}
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md">
+              <UserIcon className="h-5 w-5 mr-2" />
+              <h1 className="text-sm font-bold">{username || 'User'}</h1>
             </div>
+            <Button className="hidden md:block bg-red-500 hover:bg-red-600" onClick={onClick}>
+            Logout
+          </Button>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="flex flex-col space-y-2 py-3 px-4">
+            <NavLink href="/dashboard" icon={<HomeIcon className="h-5 w-5" />} pathname={pathname}>
+              Dashboard
+            </NavLink>
+            <NavLink href="/new-construction" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
+              New Construction
+            </NavLink>
+            <NavLink href="/maintenance" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
+              Maintenance
+            </NavLink>
+            <NavLink href="/notifications" icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
+              Notifications
+            </NavLink>
             <Button className="bg-red-500 hover:bg-red-600" onClick={onClick}>
               Logout
             </Button>
           </div>
-
         </div>
-      </div>
+      )}
     </nav>
   );
 };
 
+// Reusable Navigation Link Component
 const NavLink = ({ href, children, icon, pathname }) => {
   const isActive = pathname === href;
 
   return (
     <Link
       href={href}
-      className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+      className={`flex items-center border-b-2 px-3 py-2 text-sm font-medium ${
         isActive
-          ? 'pb-2 border-blue-500 text-gray-900'
+          ? 'border-blue-500 text-gray-900'
           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
       }`}
     >

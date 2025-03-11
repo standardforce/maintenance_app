@@ -7,7 +7,6 @@ import Footer from '@/components/Footer';
 import { usePathname } from 'next/navigation';
 import Toaster from '@/components/ui/toaster';
 
-
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }) {
@@ -18,22 +17,21 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full flex flex-col`}>
-        <div className="flex-grow flex flex-col">
-          {/* Conditionally render Navbar */}
-          {!hideNavbarPaths.includes(pathname) && <Navbar />}
-          <main className="flex-grow py-10">
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-              {children}
-            </div>
-          </main>
-          <Footer />
-          <Toaster />
-        </div>
+      <body className={`${inter.className} h-screen flex flex-col`}>
+        {/* Conditionally render Navbar */}
+        {!hideNavbarPaths.includes(pathname) && <Navbar />}
+
+        {/* Main content container - takes full available height */}
+        <main className="flex-grow flex items-center justify-center">
+          <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
+
         {/* Footer always at the bottom */}
+        <Footer />
+        <Toaster />
       </body>
     </html>
   );
 }
-
-
