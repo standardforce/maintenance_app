@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
+
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -89,7 +90,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
       </div>
     );
   }
@@ -119,21 +120,23 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
             {features.map((feature, index) => (
               <div 
-                key={index} 
-                className="bg-white p-4 rounded-lg shadow-md flex items-start space-x-3 hover:shadow-lg transition-shadow duration-300"
-              >
-                <feature.icon className="h-8 w-8 text-blue-500 mt-1" />
-                <div>
-                  <h3 className="font-semibold text-gray-800">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm">{feature.description}</p>
-                </div>
+              key={index} 
+              className="bg-white p-4 rounded-lg shadow-md flex items-start space-x-3 transition-transform duration-300 hover:scale-105 hover:shadow-xl"
+            >
+              <feature.icon className="h-8 w-8 text-blue-500 mt-1 animate-bounce" />
+              <div>
+                <h3 className="font-semibold text-gray-800">{feature.title}</h3>
+                <p className="text-gray-600 text-sm">{feature.description}</p>
               </div>
+            </div>
             ))}
           </div>
         </div>
 
         {/* Login Section */}
-        <div className="flex-1 max-w-md w-full">
+        <div
+          className="flex-1 max-w-md w-full"
+        >
           <Card className="pt-4 pb-10 bg-white shadow-2xl rounded-xl border-t-4 border-blue-600">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
@@ -163,9 +166,12 @@ export default function Home() {
                   <Input id="password" type="password" placeholder="Enter your password" {...register("password")} />
                   {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>}
                 </div>
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md flex items-center justify-center">
-                  <LoginIcon className="mr-2 h-5 w-5" /> Login
-                </Button>
+                <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md flex items-center justify-center active:scale-95 transition-transform duration-100"
+              >
+                <LoginIcon className="mr-2 h-5 w-5" /> Login
+              </Button>
               </form>
             </CardContent>
           </Card>
