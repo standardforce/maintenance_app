@@ -25,67 +25,77 @@ const formSchema = z.object({
 
 export default function Home() {
   const router = useRouter();
-  const [loginError, setLoginError] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [loginError, setLoginError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/auth/verify-token", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const response = await fetch("/api/auth/verify-token", {
+                    method: "GET",
+                    credentials: "include",
+                });
 
-        if (response.ok) {
-          router.push("/dashboard");
+                if (response.ok) {
+                    const data = await response.json();
+                    handleRedirect(data.payload.role);
+                }
+            } catch (error) {
+                console.error("Error verifying token:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkAuth();
+    }, [router]);
+
+    const handleRedirect = (role) => {
+        console.log("Redirecting user with role:", role);  // Debugging
+
+        if (role === "system_admin") {
+            router.push("/system-admin");
+        } else if (role === "company_admin") {
+            router.push("/dashboard");
+        } else {
+            router.push("/dashboard");
         }
-      } catch (error) {
-        console.error("Error verifying token:", error);
-      } finally {
-        setLoading(false);
-      }
     };
-    checkAuth();
-  }, [router]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (values, event) => {
-    event?.preventDefault();
-    setLoginError(null);
-  
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            username: "",
+            password: "",
         },
-        body: JSON.stringify(values),
-        credentials: "include",
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        router.push("/dashboard");
-      } else {
-        setLoginError(data.message || "Login failed. Please check your credentials.");
-      }
-    } catch (error) {
-      console.error("Error logging in:", error);
-      setLoginError("An unexpected error occurred. Please try again.");
-    }
-  };
+    });
+
+    const onSubmit = async (values, event) => {
+        event?.preventDefault();
+        setLoginError(null);
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+                credentials: "include",
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                handleRedirect(data.role);
+            } else {
+                setLoginError(data.message || "Login failed. Please check your credentials.");
+            }
+        } catch (error) {
+            console.error("Error logging in:", error);
+            setLoginError("An unexpected error occurred. Please try again.");
+        }
+    };
   
   if (loading) {
     return (

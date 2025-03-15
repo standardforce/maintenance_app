@@ -7,14 +7,14 @@ export async function POST(request){
 
     try{
         const [rows]=await pool.query(
-            "SELECT id, username FROM users WHERE username=? AND password=?",
+            "SELECT id, username,role, password FROM users WHERE username=? AND password=?",
             [username,password]
         );
         console.log(rows);
        if(rows.length>0){
         const user=rows[0];
         const token=jwt.sign(
-            {user_id:user.id, username:user.username},
+            {user_id:user.id, username:user.username, role:user.role},
             JWT_SECRET,
             {expiresIn:"1h"}
         );
@@ -29,7 +29,8 @@ export async function POST(request){
           });
 
         return new Response(JSON.stringify({
-            message:"Login Successful"
+            message:"Login Successful",
+            role:user.role
         }),{
             status:200,
             headers:{

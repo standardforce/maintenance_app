@@ -18,12 +18,13 @@ import {
 const Navbar = () => {
   const [username, setUsername] = useState("Tomiken");
   const [id, setUserid] = useState(1);
+  const [role, setRole] = useState();
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  const onClick = async () => {
+  const onLogout = async () => {
     try {
       const response = await fetch("/api/logout", {
         method: "POST",
@@ -59,10 +60,11 @@ const Navbar = () => {
         }
 
         const result = await response.json();
-        const { userId, username } = result.payload;
-       
+        const { userId, username, role } = result.payload;
+
         setUsername(username);
         setUserid(userId);
+        setRole(role);
       } catch (error) {
         console.error('Authentication failed:', error);
         router.push('/');
@@ -124,8 +126,19 @@ const Navbar = () => {
             </NavLink>
           </div>
 
-          {/* Profile & Logout (Always Visible) */}
+          {/* Profile, "Add User" Button & Logout */}
           <div className="flex items-center space-x-4">
+            {/* ✅ Add User Button for `company_admin` */}
+            {role === "company_admin" && (
+              <motion.button
+                className="hidden md:block bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md text-white"
+                onClick={() => router.push("/company-admin")}
+                whileTap={{ scale: 0.95 }} // Button click effect
+              >
+                Add User
+              </motion.button>
+            )}
+
             <motion.div 
               className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md"
               whileHover={{ scale: 1.05 }} // Slight scale up on hover
@@ -133,9 +146,10 @@ const Navbar = () => {
               <UserIcon className="h-5 w-5 mr-2" />
               <h1 className="text-sm font-bold">{username || 'User'}</h1>
             </motion.div>
+
             <motion.button
               className="hidden md:block bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white"
-              onClick={onClick}
+              onClick={onLogout}
               whileTap={{ scale: 0.95 }} // Button click effect
             >
               Logout
@@ -167,9 +181,21 @@ const Navbar = () => {
               <NavLink href="/notifications" icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
                 Notifications
               </NavLink>
+
+              {/* ✅ Mobile "Add User" Button for `company_admin` */}
+              {role === "company_admin" && (
+                <motion.button 
+                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md text-white"
+                  onClick={() => router.push("/company-admin")}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Add User
+                </motion.button>
+              )}
+
               <motion.button 
                 className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-white"
-                onClick={onClick}
+                onClick={onLogout}
                 whileTap={{ scale: 0.95 }}
               >
                 Logout
@@ -181,6 +207,8 @@ const Navbar = () => {
     </motion.nav>
   );
 };
+
+
 
 // Reusable Navigation Link Component
 const NavLink = ({ href, children, icon, pathname }) => {

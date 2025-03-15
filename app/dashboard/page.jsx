@@ -67,6 +67,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [data, setData] = useState([]);
   const [user, setUser] = useState();
+  // const [role,setRole]=useState();
   const [openDialog, setOpenDialog] = useState(null);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -114,6 +115,7 @@ export default function Dashboard() {
         }
         const resp = await response.json();
         setUser(resp.payload.user_id);
+        // setRole(resp.payload.role);
       } catch (error) {
         console.error("Authentication failed:", error);
         router.push("/");
