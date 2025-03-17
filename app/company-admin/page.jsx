@@ -22,24 +22,24 @@ export default function CompanyAdmin() {
     // const [companyName,setCompanyName]=useState("");
     const [errorMessage,setErrorMessage]=useState(null);
 
-    const handleLogout=async()=>{
-        try{
-            const response=await fetch('/api/logout',{
-                method:"POST",
-                credentials:"include",
-            });
+    // const handleLogout=async()=>{
+    //     try{
+    //         const response=await fetch('/api/logout',{
+    //             method:"POST",
+    //             credentials:"include",
+    //         });
 
-            if(response.ok){
-                router.push('/');
-            }
-            else{
-                console.error('Logout failed');
-            }
-        }
-        catch(error){
-            console.error('Error logging out',error);
-        }
-    };
+    //         if(response.ok){
+    //             router.push('/');
+    //         }
+    //         else{
+    //             console.error('Logout failed');
+    //         }
+    //     }
+    //     catch(error){
+    //         console.error('Error logging out',error);
+    //     }
+    // };
 
     useEffect(()=>{
         const checkAuth=async()=>{

@@ -50,7 +50,7 @@ export default function Home() {
     }, [router]);
 
     const handleRedirect = (role) => {
-        console.log("Redirecting user with role:", role);  // Debugging
+        // console.log("Redirecting user with role:", role);  // Debugging
 
         if (role === "system_admin") {
             router.push("/system-admin");
