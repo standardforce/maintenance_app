@@ -29,7 +29,7 @@ export async function GET(request){
     if(!userId){
         return new Response(JSON.stringify({message:"Unauthorized"}, {status:404}));
     }
-     const [rows]=await pool.query("SELECT * FROM constructions WHERE user_id=?",[userId]);
+     const [rows]=await pool.query("SELECT * FROM t_matter");
      return new Response(JSON.stringify(rows), {
         status:200,
         headers:{

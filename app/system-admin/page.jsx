@@ -107,50 +107,112 @@ export default function SystemAdmin() {
     }
 
     return (
-        <motion.div className="max-w-4xl mx-auto p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">System Admin Dashboard</h1>
-                <Button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 flex items-center">
-                    <LogOutIcon className="h-5 w-5 mr-2" />
-                    Logout
-                </Button>
-            </div>
+        <motion.div>
+         <motion.h1 
+            className="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-600 to-indigo-500 text-transparent bg-clip-text dark:from-blue-400 dark:to-indigo-300 mb-8"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+            Infrapulse
+        </motion.h1>
+        <motion.div 
+        className="max-w-3xl mx-auto p-8 bg-white dark:bg-gray-900 rounded-lg shadow-xl"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        >
+        {/* Header with Logout */}
+        <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+            System Admin Dashboard
+            </h1>
+            <Button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 flex items-center rounded-md transition duration-200"
+            >
+            <LogOutIcon className="h-5 w-5 mr-2" />
+            Logout
+            </Button>
+        </div>
 
-            <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
-                <Card className="shadow-lg">
-                    <CardHeader>
-                        <CardTitle className="text-lg md:text-xl">Add Company Admin</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            {errorMessage && <p className="text-red-600 text-sm text-center">{errorMessage}</p>}
+        {/* Animated Form Container */}
+        <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+            <Card className="shadow-lg p-6 bg-gray-50 dark:bg-gray-800 rounded-md">
+            <CardHeader className="text-center">
+                <CardTitle className="text-xl font-semibold text-gray-800 dark:text-white">
+                Add Company Admin
+                </CardTitle>
+            </CardHeader>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {[
-                                    { name: "username", label: "Username", icon: UserIcon },
-                                    { name: "password", label: "Password", icon: LockIcon },
-                                    { name: "companyName", label: "Company Name", icon: BuildingIcon },
-                                ].map(({ name, label, icon: Icon }, index) => (
-                                    <motion.div key={index} initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4, delay: index * 0.1 }}>
-                                        <div className="relative">
-                                            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-                                                {label}
-                                            </label>
-                                            <Icon className="absolute left-2 top-10 h-4 w-4 text-gray-400" />
-                                            <Input id={name} className="pl-8" {...form.register(name)} />
-                                        </div>
-                                        <p className="text-red-600 text-sm mt-1">{form.formState.errors[name]?.message}</p>
-                                    </motion.div>
-                                ))}
-                            </div>
+            <CardContent className="space-y-6">
+                {errorMessage && (
+                <p className="text-red-600 text-sm text-center">
+                    {errorMessage}
+                </p>
+                )}
 
-                            <motion.button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                Add Company Admin
-                            </motion.button>
-                        </form>
-                    </CardContent>
-                </Card>
-            </motion.div>
+                {/* Form */}
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {[
+                    { name: "username", label: "Username", icon: UserIcon },
+                    { name: "password", label: "Password", icon: LockIcon },
+                    { name: "companyName", label: "Company Name", icon: BuildingIcon },
+                    ].map(({ name, label, icon: Icon }, index) => (
+                    <motion.div 
+                        key={index}
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                    >
+                        <div className="relative">
+                        <label htmlFor={name} className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+                            {label}
+                        </label>
+                        <div className="relative">
+                            <Icon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                            <Input
+                            id={name}
+                            className="pl-10 py-2 w-full border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            {...form.register(name)}
+                            />
+                        </div>
+                        <p className="text-red-600 text-sm mt-1">
+                            {form.formState.errors[name]?.message}
+                        </p>
+                        </div>
+                    </motion.div>
+                    ))}
+                </div>
+
+                {/* Submit Button */}
+                <motion.button 
+                    type="submit" 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition duration-200 shadow-md"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    Add Company Admin
+                </motion.button>
+                </form>
+
+                {/* Optional Illustration
+                <div className="hidden md:flex justify-center mt-6">
+                <img 
+                    src="https://source.unsplash.com/400x250/?office,technology" 
+                    alt="Illustration" 
+                    className="rounded-md shadow-md"
+                />
+                </div> */}
+            </CardContent>
+            </Card>
+        </motion.div>
+        </motion.div>
         </motion.div>
     );
 }

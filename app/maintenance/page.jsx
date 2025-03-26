@@ -19,13 +19,18 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 // Validation Schema
 const formSchema = z.object({
-  address: z.string().min(1, "Address is required"),
-  clientName: z.string().min(1, "Client name is required"),
-  constructionCompany: z.string().min(1, "Construction Company is required"),
-  registrationdate: z.string().min(1, "Registration date is required"),
+  matter_no:z.string().min(1,"matter_no is required"),
+  matter_name:z.string().min(1,"matter_name is required"),
+  customer_id:z.string(),
+  owner_name:z.string(),
+  architecture_type:z.string(),
+  address_id: z.string().min(1, "Address is required"),
+  department_id: z.string().min(1, "Department is required"),
+  update_date: z.string().min(1, "Registration date is required"),
 });
 
 export default function MaintenanceSchedule() {
@@ -37,10 +42,14 @@ export default function MaintenanceSchedule() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      address: "",
-      clientName: "",
-      constructionCompany: "",
-      registrationdate: "",
+      matter_no:"",
+      matter_name:"",
+      customer_id:"",
+      owner_name:"",
+      architecture_type:"",
+      address_id: "",
+      department_id: "",
+      update_date: "",
     },
   });
 
@@ -60,11 +69,14 @@ export default function MaintenanceSchedule() {
         const data = await response.json();
 
         const formattedData = data.map((item) => ({
-          id: item.id,
-          address: item.address,
-          clientName: item.client_name,
-          constructionCompany: item.company_name,
-          registrationdate: item.regis_date ? new Date(item.regis_date).toISOString().split("T")[0] : "",
+          matter_no: item.matter_no,
+          matter_name:item.matter_name,
+          customer_id:item.customer_id,
+          owner_name:item.owner_name,
+          architecture_type:item.architecture_type,
+          address_id:item.address_id, 
+          department_id:item.department_id,
+          update_date:item.update_at.split('T')[0],
         }));
 
         setProperties(formattedData);
@@ -75,13 +87,17 @@ export default function MaintenanceSchedule() {
     fetchData();
   }, []);
 
-  const handleEdit = (property) => {
-    setEditingProperty(property);
+  const handleEdit = (item) => {
+    setEditingProperty(item);
     form.reset({
-      address: property.address,
-      clientName: property.clientName,
-      constructionCompany: property.constructionCompany,
-      registrationdate: property.registrationdate,
+      matter_no: item.matter_no,
+      matter_name:item.matter_name,
+      customer_id:item.customer_id,
+      owner_name:item.owner_name,
+      architecture_type:item.architecture_type,
+      address_id:item.address_id, 
+      department_id:item.department_id,
+      update_date:item.update_at,
     });
 
     setIsDialogOpen(true);
@@ -92,15 +108,19 @@ export default function MaintenanceSchedule() {
     setIsDialogOpen(false);
   };
 
-  const filteredProperties = properties.filter((property) =>
-    property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    property.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    property.constructionCompany.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredProperties = properties.filter((property) =>
+  //   property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   property.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   property.constructionCompany.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
+  const router = useRouter();
+  const handleRedirect = () => {
+    router.push("/new-construction");
+  };
   return (
     <motion.div
-      className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8"
+      className="max-w-8xl mx-auto p-2 md:p-3 lg:pl-1 lg:pr-1 lg:pt-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -132,52 +152,47 @@ export default function MaintenanceSchedule() {
 
       {/* Responsive Table */}
       <motion.div
-        className="mt-6 overflow-x-auto"
+        className="mt-6 overflow-x-auto p-2 text-3xl"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
         <Table className="w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Address</TableHead>
-              <TableHead>Client Name</TableHead>
-              <TableHead>Construction Company</TableHead>
-              <TableHead>Registration Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+        <TableHeader className="bg-blue-600">
+        <TableRow>
+          <TableHead className="text-white text-sm">ID</TableHead>
+          <TableHead className="text-white text-sm">Matter Name</TableHead>
+          <TableHead className="text-white text-sm">Customer</TableHead>
+          <TableHead className="text-white text-sm">Owner Name</TableHead>
+          <TableHead className="text-white text-sm">Architecture</TableHead>
+          <TableHead className="text-white text-sm">Address</TableHead>
+          <TableHead className="text-white text-sm">Department</TableHead>
+          <TableHead className="text-white text-xs">Update Date</TableHead>
+          <TableHead className="text-white text-sm">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
           <TableBody>
-            {filteredProperties.length > 0 ? (
-              filteredProperties.map((property, index) => (
+            {properties.length > 0 ? (
+              properties.map((property, index) => (
                 <motion.tr
                   key={property.id}
+                  className="border-b"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <TableCell>{property.address}</TableCell>
-                  <TableCell>{property.clientName}</TableCell>
-                  <TableCell>{property.constructionCompany}</TableCell>
-                  <TableCell>{property.registrationdate}</TableCell>
+                  <TableCell>{property.matter_no}</TableCell>
+                  <TableCell>{property.matter_name}</TableCell>
+                  <TableCell>{property.customer_id}</TableCell>
+                  <TableCell>{property.owner_name}</TableCell>
+                  <TableCell>{property.architecture_type}</TableCell>
+                  <TableCell>{property.address_id}</TableCell>
+                  <TableCell>{property.department_id}</TableCell>
+                  <TableCell>{property.update_date}</TableCell>
                   <TableCell>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.button
-                            className="bg-gray-200 p-2 rounded-md"
-                            onClick={() => handleEdit(property)}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </motion.button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Edit details</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                  <Button onClick={handleRedirect} className="bg-green-600 text-white hover:bg-green-700">
+                    Edit
+                  </Button>
                   </TableCell>
                 </motion.tr>
               ))
@@ -191,80 +206,6 @@ export default function MaintenanceSchedule() {
           </TableBody>
         </Table>
       </motion.div>
-
-
-      {/* Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Edit Property Details</DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="clientName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Client Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="constructionCompany"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Construction Company</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="registrationdate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Registration Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter>
-                <Button type="submit">Save Changes</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
     </motion.div>
   );
 }

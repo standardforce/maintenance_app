@@ -119,10 +119,10 @@ const Navbar = () => {
               New Construction
             </NavLink>
             <NavLink href="/maintenance" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
-              Maintenance
+              Pending Data
             </NavLink>
             <NavLink href="/notifications" icon={<BellIcon className="h-5 w-5" />} pathname={pathname}>
-              Notifications
+              Processed Data
             </NavLink>
           </div>
 
