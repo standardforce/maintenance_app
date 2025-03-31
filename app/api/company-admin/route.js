@@ -1,5 +1,6 @@
 import pool from "@/lib/db";
 import { cookies } from "next/headers";
+import { sendVerificationEmail } from "@/lib/mailer";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_KEY;
@@ -17,7 +18,6 @@ export async function GET(request) {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-
     if (decoded.role !== "company_admin") {
       return new Response(JSON.stringify({ message: "Access Denied!" }), {
         status: 403,
@@ -46,10 +46,10 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    
     try {
       const cookieStore =await cookies(); 
       const token = cookieStore.get("jwt")?.value;
-  
       if (!token) {
         return new Response(JSON.stringify({ message: "Unauthorized" }), {
           status: 401,
@@ -77,16 +77,16 @@ export async function POST(request) {
         tel_1,
         role,
       } = body;
-  
+      const verificationToken = jwt.sign({ email }, JWT_SECRET, { expiresIn: '15m' });
       const [result] = await pool.query(
         `UPDATE m_staff_infrapulse
-         SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, password = ?, tel_1 = ?, role=?
+         SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, password = ?, tel_1 = ?, role=?, verification_token = ?, email_verified = false
          WHERE id = ?`,
-        [staff_name, staff_kana, employee_code, email, login_id, password, tel_1, role,id]
+        [staff_name, staff_kana, employee_code, email, login_id, password, tel_1, role,verificationToken, id]
       );
-  
+      await sendVerificationEmail(email, verificationToken);
       return new Response(
-        JSON.stringify({ message: "Staff updated successfully" }),
+        JSON.stringify({ message: "Staff updated. Verification email sent." }),
         { status: 200 }
       );
     } catch (error) {
