@@ -1,81 +1,122 @@
-import pool from '@/lib/db'
+import pool from '@/lib/db';
 import { cookies } from 'next/headers';
-import jwt from "jsonwebtoken"
-const JWT_SECRET=process.env.JWT_KEY
+import  jwt from 'jsonwebtoken';
+
+const JWT_SECRET=process.env.JWT_KEY;
+
 export async function POST(request){
-    const {username,password}=await request.json();
+    const {username, password}=await request.json();
 
     try{
         const [rows]=await pool.query(
-            "SELECT id, username,role, password FROM users WHERE username=? AND password=?",
-            [username,password]
+            `SELECT login_id, role, password FROM m_staff_infrapulse WHERE login_id=?`,
+            [username]
         );
-        console.log(rows);
-       if(rows.length>0){
+        
+        if(rows.length===0){
+         return new Response(JSON.stringify({message:"User does not exist"}),{
+            status:404,
+            headers: {"Content-Type" : "application/json"},
+         }
+        )
+        }
         const user=rows[0];
+        if(user.password!==password){
+            return new Response(JSON.stringify({message:"Invalid password"}),{
+                status:401,
+                headers:{
+                    "Content-Type":"application/json"
+                },
+            });
+        }
+
         const token=jwt.sign(
             {user_id:user.id, username:user.username, role:user.role},
             JWT_SECRET,
-            {expiresIn:"1h"}
+            {expiresIn:'1h'}
         );
 
-        const cookiestore=await cookies();
-        cookiestore.set('jwt', token, {
-            httpOnly: true,  // Secure against client-side access
-            maxAge: 24 * 60 * 60,  // 1 day (seconds)
-            // secure: process.env.NODE_ENV === "production", // Secure only in production
-            sameSite: "Strict", // Prevents CSRF attacks
-            path: "/"
-          });
+        const cookieStore=await cookies();
+        cookieStore.set('jwt',token, {
+            httpOnly:true,
+            maxAge:24*60*60,
+            sameSite:"Strict",
+            path:"/"
+        });
 
         return new Response(JSON.stringify({
-            message:"Login Successful",
+            message:'Login successful',
             role:user.role
         }),{
             status:200,
-            headers:{
-                "Content-Type":"application/json",
-            },
+            headers:{"Content-Type":"application/json"}
         });
-       }
-       else{
-        return new Response(
-            JSON.stringify({
-                message:"Invalid username or password"
-            }),{status:401}
-        );
-       }
     }
-    catch (error) {
-        console.error("Login error:", error);
-        return new Response(JSON.stringify({ message: "Internal Server Error" }), {
-          status: 500,
-    });
+    catch(error){
+        console.error('Login error:', error);
+        return new Response(JSON.stringify({message:"Internal Server Error"}),{
+            status:500,
+        })
     }
 }
 
-// export async function GET(request) {
+
+// import pool from '@/lib/db';
+// import { cookies } from 'next/headers';
+// import jwt from "jsonwebtoken";
+
+// const JWT_SECRET = process.env.JWT_KEY;
+
+// export async function POST(request) {
+//     const { username, password } = await request.json();
+
 //     try {
-//       // Verify token and extract user ID
-//       const userId = authmiddleware(request);
-  
-//       if (!userId) {
-//         return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
-//       }
-  
-//       // Proceed with database query
-//       const [rows] = await pool.query("SELECT * FROM users");
-  
-//       return new Response(JSON.stringify(rows), {
-//         status: 200,
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
+//         const [rows] = await pool.query(
+//             `SELECT login_id, role, password FROM m_staff_infrapulse WHERE login_id = ?`,
+//             [username]
+//         );
+
+//         if (rows.length === 0) {
+//             return new Response(JSON.stringify({ message: "User does not exist" }), {
+//                 status: 404,
+//                 headers: { "Content-Type": "application/json" },
+//             });
+//         }
+
+//         const user = rows[0];
+
+//         if (user.password !== password) {
+//             return new Response(JSON.stringify({ message: "Invalid password" }), {
+//                 status: 401,
+//                 headers: { "Content-Type": "application/json" },
+//             });
+//         }
+
+//         const token = jwt.sign(
+//             { user_id: user.id, username: user.username, role: user.role },
+//             JWT_SECRET,
+//             { expiresIn: "1h" }
+//         );
+
+//         const cookieStore =await cookies();
+//         cookieStore.set('jwt', token, {
+//             httpOnly: true,
+//             maxAge: 24 * 60 * 60,
+//             sameSite: "Strict",
+//             path: "/"
+//         });
+
+//         return new Response(JSON.stringify({
+//             message: "Login successful",
+//             role: user.role
+//         }), {
+//             status: 200,
+//             headers: { "Content-Type": "application/json" },
+//         });
 //     } catch (error) {
-//       console.error("Error in GET /api/users:", error.message);
-//       return new Response(JSON.stringify({ message: "Internal Server Error" }), {
-//         status: error.message.startsWith("Unauthorized") ? 401 : 500,
-//       });
+//         console.error("Login error:", error);
+//         return new Response(JSON.stringify({ message: "Internal Server Error" }), {
+//             status: 500,
+//         });
 //     }
-//   }
+// }

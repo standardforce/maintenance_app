@@ -55,7 +55,7 @@ export default function Home() {
         if (role === "system_admin") {
             router.push("/system-admin");
         } else if (role === "company_admin") {
-            router.push("/dashboard");
+            router.push("/company-admin");
         } else {
             router.push("/dashboard");
         }
