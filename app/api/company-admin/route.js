@@ -77,18 +77,41 @@ export async function POST(request) {
         tel_1,
         role,
       } = body;
-      const verificationToken = jwt.sign({ email }, JWT_SECRET, { expiresIn: '15m' });
-      const [result] = await pool.query(
-        `UPDATE m_staff_infrapulse
-         SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, password = ?, tel_1 = ?, role=?, verification_token = ?, email_verified = false
-         WHERE id = ?`,
-        [staff_name, staff_kana, employee_code, email, login_id, password, tel_1, role,verificationToken, id]
+      const [existing] = await pool.query(
+        `SELECT password FROM m_staff_infrapulse WHERE id = ?`,
+        [id]
       );
-      await sendVerificationEmail(email, verificationToken);
-      return new Response(
-        JSON.stringify({ message: "Staff updated. Verification email sent." }),
-        { status: 200 }
-      );
+      const oldPassword = existing[0]?.password;
+      const passwordChanged = oldPassword !== password;
+      if (passwordChanged) {
+        const verificationToken = jwt.sign({ email }, JWT_SECRET, { expiresIn: '15m' });
+      
+        await pool.query(
+          `UPDATE m_staff_infrapulse
+           SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, password = ?, tel_1 = ?, role = ?, verification_token = ?, email_verified = false
+           WHERE id = ?`,
+          [staff_name, staff_kana, employee_code, email, login_id, password, tel_1, role, verificationToken, id]
+        );
+      
+        await sendVerificationEmail(email, verificationToken);
+      
+        return new Response(
+          JSON.stringify({ message: "Password updated. Verification email sent." }),
+          { status: 200 }
+        );
+      } else {
+        await pool.query(
+          `UPDATE m_staff_infrapulse
+           SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, tel_1 = ?, role = ?
+           WHERE id = ?`,
+          [staff_name, staff_kana, employee_code, email, login_id, tel_1, role, id]
+        );
+      
+        return new Response(
+          JSON.stringify({ message: "Staff details updated (no password change)." }),
+          { status: 200 }
+        );
+      }
     } catch (error) {
       console.error("Error updating staff:", error);
       return new Response(JSON.stringify({ message: "Internal Server Error" }), {
