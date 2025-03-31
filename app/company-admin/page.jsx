@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import StaffTable from '@/components/StaffTable';
+import StaffTable from '../../components/staffTable';
 import { Button } from '@/components/ui/button';
 import { useRouter } from "next/navigation";
 export default function CompanyAdminPage() {
