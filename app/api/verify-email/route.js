@@ -19,12 +19,16 @@ export async function GET(request) {
     const email = decoded.email;
 
     // Update DB: mark email as verified
-    const [result] = await pool.query(
-      `UPDATE m_staff_infrapulse
-       SET email_verified = true, verification_token = NULL
-       WHERE email = ? AND verification_token = ?`,
-      [email, token]
+  const [result] = await pool.query(
+  `UPDATE m_staff_infrapulse
+   SET password = pending_password,
+       pending_password = NULL,
+       email_verified = true,
+       verification_token = NULL
+    WHERE email = ? AND verification_token = ?`,
+    [email, token]
     );
+
 
     if (result.affectedRows === 0) {
       return new Response(JSON.stringify({ message: "Invalid or expired token" }), {

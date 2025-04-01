@@ -27,8 +27,7 @@ export async function GET(request) {
     const [rows] = await pool.query(
       `SELECT id, staff_name, staff_kana, employee_code, email, login_id, password, tel_1, del_flg,role
        FROM m_staff_infrapulse
-       WHERE role != 'company_admin'
-       ORDER BY del_flg ASC`
+      ORDER BY role ASC`
     );
 
     return new Response(JSON.stringify({ staff: rows }), {
@@ -88,7 +87,7 @@ export async function POST(request) {
       
         await pool.query(
           `UPDATE m_staff_infrapulse
-           SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, password = ?, tel_1 = ?, role = ?, verification_token = ?, email_verified = false
+           SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, pending_password = ?, tel_1 = ?, role = ?, verification_token = ?, email_verified = false
            WHERE id = ?`,
           [staff_name, staff_kana, employee_code, email, login_id, password, tel_1, role, verificationToken, id]
         );
@@ -96,10 +95,11 @@ export async function POST(request) {
         await sendVerificationEmail(email, verificationToken);
       
         return new Response(
-          JSON.stringify({ message: "Password updated. Verification email sent." }),
+          JSON.stringify({ message: "Password change pending verification. Email sent." }),
           { status: 200 }
         );
-      } else {
+      }
+       else {
         await pool.query(
           `UPDATE m_staff_infrapulse
            SET staff_name = ?, staff_kana = ?, employee_code = ?, email = ?, login_id = ?, tel_1 = ?, role = ?

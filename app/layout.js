@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
 
   // Pages where the Navbar should not be shown
-  const hideNavbarPaths = ['/', '/login','/system-admin', '/company-admin'];
+  const hideNavbarPaths = ['/', '/login','/system-admin', '/company-admin', '/verify-email'];
 
   return (
     <html lang="en" className="h-full">

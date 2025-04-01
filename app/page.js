@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter,usePathname } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { 
   LogInIcon, 
@@ -25,10 +25,12 @@ const formSchema = z.object({
 
 export default function Home() {
   const router = useRouter();
+  const pathname = usePathname();
     const [loginError, setLoginError] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+      if (pathname !== '/') return;
         const checkAuth = async () => {
             try {
                 const response = await fetch("/api/auth/verify-token", {
