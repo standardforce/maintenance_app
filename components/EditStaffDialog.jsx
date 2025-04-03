@@ -14,26 +14,36 @@ import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 
 export default function EditStaffDialog({ staff, onClose }) {
-  const [form, setForm] = useState({ ...staff });
+  const { password, ...safeStaff } = staff;
+
+  const [form, setForm] = useState({ ...safeStaff });
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSave = async () => {
+    const payload = { ...form };
+
+    // Don't include password if not set or empty
+    if (!showPasswordInput || !form.password?.trim()) {
+      delete payload.password;
+    }
+
     try {
       const res = await fetch('/api/company-admin', {
         method: 'POST',
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' },
       });
 
       if (!res.ok) {
         const err = await res.json();
-        console.error("Update failed:", err.message);
+        console.error('Update failed:', err.message);
       }
     } catch (err) {
-      console.error("Error in update:", err);
+      console.error('Error in update:', err);
     }
 
     onClose();
@@ -54,7 +64,6 @@ export default function EditStaffDialog({ staff, onClose }) {
             ['employee_code', 'Employee Code'],
             ['email', 'Email'],
             ['login_id', 'Login ID'],
-            ['password', 'Password'],
             ['tel_1', 'Phone Number'],
           ].map(([field, label]) => (
             <div key={field} className="grid grid-cols-4 items-center gap-4">
@@ -70,6 +79,35 @@ export default function EditStaffDialog({ staff, onClose }) {
               />
             </div>
           ))}
+
+          {/* Password (only if toggled) */}
+          {showPasswordInput ? (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="password" className="text-right">
+                New Password
+              </Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter new password"
+                value={form.password || ''}
+                onChange={handleChange}
+                className="col-span-3"
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div></div>
+              <Button
+                variant="outline"
+                className="col-span-3 bg-red-600 hover:bg-red-700 text-white hover:text-white"
+                onClick={() => setShowPasswordInput(true)}
+              >
+                Set New Password
+              </Button>
+            </div>
+          )}
 
           {/* Role dropdown */}
           <div className="grid grid-cols-4 items-center gap-4">

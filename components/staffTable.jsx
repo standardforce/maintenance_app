@@ -55,7 +55,6 @@ export default function StaffTable({ staff }) {
             <TableHead>Emp Code</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Login ID</TableHead>
-            <TableHead>Password</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Actions</TableHead>
@@ -69,7 +68,6 @@ export default function StaffTable({ staff }) {
               <TableCell>{user.employee_code}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.login_id}</TableCell>
-              <TableCell>{user.password}</TableCell>
               <TableCell>{user.tel_1}</TableCell>
               <TableCell>{user.role}</TableCell>
               <TableCell>

@@ -129,15 +129,15 @@ const Navbar = () => {
           {/* Profile, "Add User" Button & Logout */}
           <div className="flex items-center space-x-4">
             {/* ✅ Add User Button for `company_admin` */}
-            {/* {role === "company_admin" && (
+            {role === "company_admin" && (
               <motion.button
                 className="hidden md:block bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md text-white"
                 onClick={() => router.push("/company-admin")}
                 whileTap={{ scale: 0.95 }} // Button click effect
               >
-                Add User
+                Manage
               </motion.button>
-            )} */}
+            )}
 
             <motion.div 
               className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md"
