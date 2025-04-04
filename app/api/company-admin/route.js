@@ -37,6 +37,7 @@ export async function GET(request) {
   }
 }
 
+
 export async function POST(request) {
   try {
     const cookieStore = await cookies();
@@ -80,7 +81,6 @@ export async function POST(request) {
 
     if (passwordChanged) {
       const plainPassword = password;
-      console.log(plainPassword);
       const hashedPassword = await bcrypt.hash(plainPassword, 10);
       const verificationToken = jwt.sign({ email, plainPassword }, JWT_SECRET, { expiresIn: "15m" });
 

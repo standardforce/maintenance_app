@@ -61,7 +61,7 @@ const Navbar = () => {
 
         const result = await response.json();
         const { userId, username, role } = result.payload;
-
+        
         setUsername(username);
         setUserid(userId);
         setRole(role);

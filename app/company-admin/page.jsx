@@ -75,8 +75,7 @@ export default function CompanyAdminPage() {
       });
 
       if (res.ok) {
-        // Redirect to login page after successful logout
-        window.location.href = '/'; // Change this path as needed
+        router.push('/'); 
       } else {
         console.error('Failed to log out');
       }

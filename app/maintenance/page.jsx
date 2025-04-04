@@ -4,32 +4,24 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion"; // Import Framer Motion
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 
 // Validation Schema
 const formSchema = z.object({
   matter_no:z.string().min(1,"matter_no is required"),
   matter_name:z.string().min(1,"matter_name is required"),
-  customer_id:z.string(),
+  customer_name:z.string(),
   owner_name:z.string(),
   architecture_type:z.string(),
-  address_id: z.string().min(1, "Address is required"),
-  department_id: z.string().min(1, "Department is required"),
+  address_1: z.string().min(1, "Address is required"),
+  address_2: z.string().min(1, "Address is required"),
+  department_name: z.string().min(1, "Department is required"),
+  staff_name: z.string().min(1, "Department is required"),
   update_date: z.string().min(1, "Registration date is required"),
 });
 
@@ -44,11 +36,13 @@ export default function MaintenanceSchedule() {
     defaultValues: {
       matter_no:"",
       matter_name:"",
-      customer_id:"",
+      customer_name:"",
       owner_name:"",
       architecture_type:"",
-      address_id: "",
-      department_id: "",
+      address_1: "",
+      address_2: "",
+      department_name: "",
+      staff_name: "",
       update_date: "",
     },
   });
@@ -71,11 +65,13 @@ export default function MaintenanceSchedule() {
         const formattedData = data.map((item) => ({
           matter_no: item.matter_no,
           matter_name:item.matter_name,
-          customer_id:item.customer_id,
+          customer_name:item.customer_name,
           owner_name:item.owner_name,
           architecture_type:item.architecture_type,
-          address_id:item.address_id, 
-          department_id:item.department_id,
+          address_1:item.address1, 
+          address_2:item.address2, 
+          department_name:item.department_name,
+          staff_name:item.staff_name,
           update_date:item.update_at.split('T')[0],
         }));
 
@@ -92,20 +88,17 @@ export default function MaintenanceSchedule() {
     form.reset({
       matter_no: item.matter_no,
       matter_name:item.matter_name,
-      customer_id:item.customer_id,
+      customer_name:item.customer_name,
       owner_name:item.owner_name,
       architecture_type:item.architecture_type,
-      address_id:item.address_id, 
-      department_id:item.department_id,
+      address_1:item.address1, 
+      address_2:item.address2, 
+      department_name:item.department_name,
+      staff_name:item.staff_name,
       update_date:item.update_at,
     });
 
     setIsDialogOpen(true);
-  };
-
-  const onSubmit = async (values) => {
-    console.log("Updated values:", values);
-    setIsDialogOpen(false);
   };
 
   // const filteredProperties = properties.filter((property) =>
@@ -115,8 +108,8 @@ export default function MaintenanceSchedule() {
   // );
 
   const router = useRouter();
-  const handleRedirect = () => {
-    router.push("/new-construction");
+  const handleRedirect = async (matterNo) => {
+    router.push(`/new-construction/${matterNo}`);
   };
   return (
     <motion.div
@@ -160,15 +153,17 @@ export default function MaintenanceSchedule() {
         <Table className="w-full">
         <TableHeader className="bg-blue-600">
         <TableRow>
-          <TableHead className="text-white text-sm">ID</TableHead>
-          <TableHead className="text-white text-sm">Matter Name</TableHead>
-          <TableHead className="text-white text-sm">Customer</TableHead>
-          <TableHead className="text-white text-sm">Owner Name</TableHead>
-          <TableHead className="text-white text-sm">Architecture</TableHead>
-          <TableHead className="text-white text-sm">Address</TableHead>
-          <TableHead className="text-white text-sm">Department</TableHead>
-          <TableHead className="text-white text-xs">Update Date</TableHead>
-          <TableHead className="text-white text-sm">Actions</TableHead>
+        <TableHead className="text-white text-xs w-32">ID</TableHead>
+        <TableHead className="text-white text-xs w-48">Matter Name</TableHead>
+        <TableHead className="text-white text-xs w-48">Customer Name</TableHead>
+        <TableHead className="text-white text-xs w-40">Owner Name</TableHead>
+        <TableHead className="text-white text-xs w-32">Architecture</TableHead>
+        <TableHead className="text-white text-xs w-48">Address1</TableHead>
+        <TableHead className="text-white text-xs w-48">Address2</TableHead>
+        <TableHead className="text-white text-xs w-48">Department Name</TableHead>
+        <TableHead className="text-white text-xs w-48">Staff Name</TableHead>
+        <TableHead className="text-white text-xs w-36">Update Date</TableHead>
+        <TableHead className="text-white text-xs w-24">Actions</TableHead>
         </TableRow>
       </TableHeader>
           <TableBody>
@@ -183,14 +178,16 @@ export default function MaintenanceSchedule() {
                 >
                   <TableCell>{property.matter_no}</TableCell>
                   <TableCell>{property.matter_name}</TableCell>
-                  <TableCell>{property.customer_id}</TableCell>
+                  <TableCell>{property.customer_name}</TableCell>
                   <TableCell>{property.owner_name}</TableCell>
                   <TableCell>{property.architecture_type}</TableCell>
-                  <TableCell>{property.address_id}</TableCell>
-                  <TableCell>{property.department_id}</TableCell>
+                  <TableCell>{property.address_1}</TableCell>
+                  <TableCell>{property.address_2}</TableCell>
+                  <TableCell>{property.department_name}</TableCell>
+                  <TableCell>{property.staff_name}</TableCell>
                   <TableCell>{property.update_date}</TableCell>
                   <TableCell>
-                  <Button onClick={handleRedirect} className="bg-green-600 text-white hover:bg-green-700">
+                  <Button onClick={() => handleRedirect(property.matter_no)} className="bg-green-600 text-white hover:bg-green-700">
                     Edit
                   </Button>
                   </TableCell>

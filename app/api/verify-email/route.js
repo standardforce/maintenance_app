@@ -1,4 +1,3 @@
-// app/api/verify-email/route.js
 import pool from "@/lib/db";
 import jwt from "jsonwebtoken";
 import { sendCredentialsEmail } from "@/lib/mailer";
@@ -18,7 +17,7 @@ export async function GET(request) {
     const decoded = jwt.verify(token, JWT_SECRET);
     const email = decoded?.email;
     const plainPassword = decoded?.plainPassword;
-    console.log("Decoded plain password from token:", plainPassword);
+
 
 
     if (!email || !plainPassword) {
