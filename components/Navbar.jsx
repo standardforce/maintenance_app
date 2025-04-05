@@ -115,9 +115,9 @@ const Navbar = () => {
             <NavLink href="/dashboard" icon={<HomeIcon className="h-5 w-5" />} pathname={pathname}>
               Dashboard
             </NavLink>
-            <NavLink href="/new-construction" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
+            {/* <NavLink href="/new-construction" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
               New Construction
-            </NavLink>
+            </NavLink> */}
             <NavLink href="/maintenance" icon={<BuildingIcon className="h-5 w-5" />} pathname={pathname}>
               Pending Data
             </NavLink>

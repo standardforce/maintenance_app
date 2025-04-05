@@ -41,7 +41,7 @@ export async function GET(request){
           md.department_name,
           ms.staff_name,
           tm.update_at
-        FROM t_matter AS tm
+        FROM t_matter_infrapulse AS tm
         LEFT JOIN m_customer AS mc ON mc.id = tm.customer_id
         LEFT JOIN m_address AS ma ON ma.id = tm.address_id
         LEFT JOIN m_department AS md ON md.id = tm.department_id
